@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovesParser {
+
     private final MoveConverter moveConverter = new MoveConverter();
+
     public List<Move> parse(String line) {
         var result = new ArrayList<Move>(2);
 
