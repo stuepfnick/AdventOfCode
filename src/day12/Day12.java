@@ -13,124 +13,129 @@ import java.util.List;
 public class Day12 {
 
     private final FileReader reader = new FileReader();
+    private final GridParser parser = new GridParser();
 
     private char[][] grid;
-    private boolean[][] visited;
+    private BufferedImage visited;
     private Vector2Int size;
 
     public static void main(String[] args) {
         var day = new Day12();
-        day.solve("example");
+        String inputFile = "input";
+        day.prepare(inputFile);
+        day.solve1(inputFile);
     }
 
-    private void solve(String fileName) {
+    private void prepare(String fileName) {
         var lines = reader.read("src/day12/files/" + fileName);
 
-        GridParser parser = new GridParser();
         grid = parser.parseLines(lines);
         size = new Vector2Int(grid[0].length, grid.length);
-        System.out.println("size: " + size);
+    }
 
-        var result = findPath2(parser.getStartPos(), parser.getEndPos());
+    private void solve1(String fileName) {
+        visited = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_RGB);
+
+        var result = findPath(parser.getStartPos(), parser.getEndPos());
+        writeImage(visited, fileName + "1");
 
         System.out.println("part1: " + result);
     }
 
-    private int findPath2(Vector2Int startPos, Vector2Int endPos) {
-        Vector2Int[] dirs = {
+    private int findPath(Vector2Int startPos, Vector2Int endPos) {
+        List<Vector2Int> dirs = new ArrayList<>(List.of(
                 Vector2Int.down(),
                 Vector2Int.right(),
                 Vector2Int.up(),
-                Vector2Int.left()};
+                Vector2Int.left()));
 
         var pos = startPos;
-        int steps = 0;
+        Queue<Vector2Int> queue = new LinkedList<>(List.of(startPos));
+        Map<Vector2Int, Vector2Int> parent = new HashMap<>();
+        visited.setRGB(pos.getX(), pos.getY(), Color.RED.getRGB());
 
-        while (true) {
+        while (!queue.isEmpty()) {
+            pos = queue.remove();
             char height = pos.equals(startPos) ? 'a' : grid[pos.getY()][pos.getX()];
+            if (pos.equals(endPos)) {
+                visited.setRGB(pos.getX(), pos.getY(), Color.GREEN.getRGB());
+                List<Vector2Int> path = new LinkedList<>();
+                System.out.println(pos);
+                while(parent.containsKey(pos)) {
+                    path.add(pos);
+                    pos = parent.get(pos);
+                    if (!pos.equals(startPos))
+                        visited.setRGB(pos.getX(), pos.getY(), Color.BLUE.getRGB());
+                }
+                return path.size();
+            }
 
-            List<Vector2Int> possibleMoves = new LinkedList<>();
             for (var dir : dirs) {
                 var newPos = pos.add(dir);
-                if (newPos.equals(endPos)) {
-                    return steps + 1;
-                }
                 if (isValid(newPos, height)) {
-                    possibleMoves.add(newPos);
+                    visited.setRGB(newPos.getX(), newPos.getY(), Color.WHITE.getRGB());
+                    queue.add(newPos);
+                    parent.put(newPos, pos);
                 }
             }
-            steps++;
-            pos = possibleMoves.stream()
-                    .max(Comparator.comparing(p -> grid[p.getY()][p.getX()]))
-                    .orElse(startPos);
         }
+        return -1;
     }
 
-    private int findPath(Vector2Int startPos, Vector2Int endPos) {
-         Vector2Int[] dirs = {
+    private int findPath2(Vector2Int startPos, Vector2Int endPos) {
+        List<Vector2Int> dirs = new ArrayList<>(List.of(
                 Vector2Int.down(),
                 Vector2Int.right(),
                 Vector2Int.up(),
-                Vector2Int.left()};
+                Vector2Int.left()));
 
-        Queue<Vector2Int> queue = new LinkedList<>();
-        queue.add(startPos);
+        var pos = startPos;
+        Queue<Vector2Int> queue = new LinkedList<>(List.of(startPos));
+        Map<Vector2Int, Vector2Int> parent = new HashMap<>();
+        visited.setRGB(pos.getX(), pos.getY(), Color.RED.getRGB());
 
-        boolean[][] visited = new boolean[size.getY()][size.getX()];
-
-        int steps = 0;
-
-        Vector2Int newPos;
         while (!queue.isEmpty()) {
-            var pos = queue.remove();
-            char height = grid[pos.getY()][pos.getX()];
-            height = height == 'S' ? 'a' : height;
-            steps++;
-
-            for (int i = 0; i < 4; i++) {
-                newPos = pos.add(dirs[i]);
-
-                if (newPos.equals(endPos)) {
-                    drawImage(visited, "path");
-                    return steps;
+            pos = queue.remove();
+            char height = pos.equals(startPos) ? 'a' : grid[pos.getY()][pos.getX()];
+            if (pos.equals(endPos)) {
+                visited.setRGB(pos.getX(), pos.getY(), Color.GREEN.getRGB());
+                List<Vector2Int> path = new LinkedList<>();
+                System.out.println(pos);
+                while(parent.containsKey(pos)) {
+                    path.add(pos);
+                    pos = parent.get(pos);
+                    if (!pos.equals(startPos))
+                        visited.setRGB(pos.getX(), pos.getY(), Color.BLUE.getRGB());
                 }
-                if (isValid(newPos, height, visited)) {
+                return path.size();
+            }
+
+            for (var dir : dirs) {
+                var newPos = pos.add(dir);
+                if (isValid(newPos, height)) {
+                    visited.setRGB(newPos.getX(), newPos.getY(), Color.WHITE.getRGB());
                     queue.add(newPos);
-                    visited[newPos.getY()][newPos.getX()] = true;
+                    parent.put(newPos, pos);
                 }
             }
         }
-        return 3;
-    }
-
-    private boolean isValid(Vector2Int newPos, char height, boolean[][] visited) {
-        if (newPos.getX() >= 0 && newPos.getX() < size.getX() && newPos.getY() >= 0 && newPos.getY() < size.getY()) {
-            if (!visited[newPos.getY()][newPos.getX()]) {
-                char newHeight = grid[newPos.getY()][newPos.getX()];
-                return newHeight == height || newHeight == height + 1;
-            }
-        }
-        return false;
+        return -1;
     }
 
     private boolean isValid(Vector2Int pos, char height) {
         if (pos.getX() >= 0 && pos.getX() < size.getX() && pos.getY() >= 0 && pos.getY() < size.getY()) {
-            char newHeight = grid[pos.getY()][pos.getX()];
-            return newHeight == height || newHeight == height + 1;
+            if (visited.getRGB(pos.getX(), pos.getY()) == Color.BLACK.getRGB()) {
+                char newHeight = grid[pos.getY()][pos.getX()];
+                return newHeight <= height + 1;
+            }
         }
         return false;
     }
 
-    private void drawImage(boolean[][] visited, String fileName) {
-        BufferedImage image = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_RGB);
-        for (int y = 0; y < visited.length; y++) {
-            for (int x = 0; x < visited[0].length; x++) {
-                image.setRGB(x, y, visited[y][x] ? Color.BLACK.getRGB() : Color.WHITE.getRGB());
-            }
-        }
+    private void writeImage(BufferedImage image, String fileName) {
         try {
             ImageIO.write(image, "png", new File( "src/day12/files/" + fileName + "_out.png"));
-            System.out.println(fileName + " image file created.");
+            //System.out.println(fileName + " image file created.");
         } catch (IOException e) {
             System.out.println("Could not write image file.");
         }

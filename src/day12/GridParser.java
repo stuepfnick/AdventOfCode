@@ -17,6 +17,7 @@ public class GridParser {
                     startPos = new Vector2Int(x, y);
                 } else if (c == 'E') {
                     endPos = new Vector2Int(x, y);
+                    grid[y][x] = 'z' + 1;
                 }
             }
         }
