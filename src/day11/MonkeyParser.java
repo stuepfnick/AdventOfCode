@@ -27,24 +27,26 @@ public class MonkeyParser {
                 case "Starting items" -> items = new LinkedList<>(Arrays.stream(info[1].split(", "))
                             .map(Long::valueOf)
                             .toList());
-                case "Operation" -> {
-                    String[] s = info[1].split("= old ")[1].split("\\s");
-                    if (s[1].equals("old")) {
-                        operation = (x) -> x * x;
-                    } else {
-                        int value = Integer.parseInt(s[1]);
-                        if (s[0].charAt(0) == '*') {
-                            operation = (x) -> x * value;
-                        } else if (s[0].charAt(0) == '+') {
-                            operation = (x) -> x + value;
-                        }
-                    }
-                }
+                case "Operation" -> operation = parseOperation(info[1].split("= old ")[1]);
                 case "Test" -> divisibleBy = Integer.parseInt(info[1].split("by ")[1]);
                 case "If true", "If false" -> targets.add(Integer.parseInt(info[1].split("monkey ")[1]));
             }
         }
         monkeys.add(new Monkey(items, operation, divisibleBy, targets));
         return monkeys;
+    }
+
+    private Function<Long, Long> parseOperation(String operation) {
+        String[] s = operation.split("\\s");
+        if (s[1].equals("old")) {
+            return (x) -> x * x;
+        }
+        int value = Integer.parseInt(s[1]);
+        if (s[0].charAt(0) == '*') {
+            return (x) -> x * value;
+        } else if (s[0].charAt(0) == '+') {
+            return (x) -> x + value;
+        }
+        throw new UnsupportedOperationException("Only * and + are supported");
     }
 }

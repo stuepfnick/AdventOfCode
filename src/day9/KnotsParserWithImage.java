@@ -43,16 +43,16 @@ public class KnotsParserWithImage {
 //        System.out.println(maxX + ", " + maxY);
 //        System.out.println(minX + ", " + minY);
 
-//        int highest = 0;
-//        for (int y = 0; y < visited.length; y++) {
-//            for (int x = 0; x < visited[0].length; x++) {
-//                highest = Math.max(highest, visited[y][x]);
-//                float b = Math.min(visited[y][x] / 92f, 1f);
-//                b = (float) Math.sqrt(b);
-//                image.setRGB(x, y, Color.HSBtoRGB(.8f + (b*.5f), 1f - (b *.8f), b));
-//            }
-//        }
-//        System.out.println("hi: " + highest);
+        int highest = 0;
+        for (int y = 0; y < visited.length; y++) {
+            for (int x = 0; x < visited[0].length; x++) {
+                highest = Math.max(highest, visited[y][x]);
+                float b = Math.min(visited[y][x] / 66f, 1f);
+                b = (float) Math.sqrt(b);
+                image.setRGB(x, y, Color.HSBtoRGB(.66f + (b*.66f), 1f - (b *.66f), b));
+            }
+        }
+        System.out.println("hi: " + highest);
 
         return visitedString.size();
     }
@@ -64,9 +64,9 @@ public class KnotsParserWithImage {
             updateTail();
             visitedString.add(Arrays.toString(knotPos[knotPos.length - 1]));
             visited[knotPos[0][1] + 51][knotPos[0][0] + 7]++;
-            for (int j = numberOfTails; j >= 0; j--) {
-                image.setRGB(knotPos[j][0] + 7, knotPos[j][1] + 51, Color.HSBtoRGB((j-1)/11f, 1f, .8f));
-            }
+//            for (int j = 0; j <= numberOfTails; j++) {
+//                image.setRGB(knotPos[j][0] + 7, knotPos[j][1] + 51, Color.HSBtoRGB((j-1)/11f, 1f, .8f));
+//            }
         }
     }
 
