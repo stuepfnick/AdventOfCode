@@ -15,6 +15,7 @@ public class GridParser {
                 grid[y][x] = c;
                 if (c == 'S') {
                     startPos = new Vector2Int(x, y);
+                    grid[y][x] = 'a' - 1;
                 } else if (c == 'E') {
                     endPos = new Vector2Int(x, y);
                     grid[y][x] = 'z' + 1;

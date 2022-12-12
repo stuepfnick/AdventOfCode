@@ -7,8 +7,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.Queue;
+import java.util.*;
+import java.util.function.BiFunction;
 
 public class Day12 {
 
@@ -24,6 +26,7 @@ public class Day12 {
         String inputFile = "input";
         day.prepare(inputFile);
         day.solve1(inputFile);
+        day.solve2(inputFile);
     }
 
     private void prepare(String fileName) {
@@ -36,13 +39,22 @@ public class Day12 {
     private void solve1(String fileName) {
         visited = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_RGB);
 
-        var result = findPath(parser.getStartPos(), parser.getEndPos());
-        writeImage(visited, fileName + "1");
+        var result = findPath(parser.getStartPos(), (char) ('z' + 1), (height, newHeight) -> height + 1 >= newHeight);
+        writeImage(visited, fileName + "1", false);
 
         System.out.println("part1: " + result);
     }
 
-    private int findPath(Vector2Int startPos, Vector2Int endPos) {
+    private void solve2(String fileName) {
+        visited = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_RGB);
+
+        var result = findPath(parser.getEndPos(), 'a', (height, newHeight) -> height - 1 <= newHeight);
+        writeImage(visited, fileName + "2", false);
+
+        System.out.println("part2: " + result);
+    }
+
+    private int findPath(Vector2Int startPos, char destination, BiFunction<Character, Character, Boolean> check) {
         List<Vector2Int> dirs = new ArrayList<>(List.of(
                 Vector2Int.down(),
                 Vector2Int.right(),
@@ -52,19 +64,19 @@ public class Day12 {
         var pos = startPos;
         Queue<Vector2Int> queue = new LinkedList<>(List.of(startPos));
         Map<Vector2Int, Vector2Int> parent = new HashMap<>();
-        visited.setRGB(pos.getX(), pos.getY(), Color.RED.getRGB());
+        drawPixel(pos, Color.GREEN);
 
         while (!queue.isEmpty()) {
             pos = queue.remove();
-            char height = pos.equals(startPos) ? 'a' : grid[pos.getY()][pos.getX()];
-            if (pos.equals(endPos)) {
-                visited.setRGB(pos.getX(), pos.getY(), Color.GREEN.getRGB());
+
+            char height = getHeight(pos);
+            if (height == destination) {
+                drawPixel(pos, Color.RED);
                 List<Vector2Int> path = new LinkedList<>();
-                System.out.println(pos);
                 while(parent.containsKey(pos)) {
                     path.add(pos);
                     pos = parent.get(pos);
-                    if (!pos.equals(startPos))
+                    if (getHeight(pos) != destination && !pos.equals(startPos))
                         visited.setRGB(pos.getX(), pos.getY(), Color.BLUE.getRGB());
                 }
                 return path.size();
@@ -72,8 +84,8 @@ public class Day12 {
 
             for (var dir : dirs) {
                 var newPos = pos.add(dir);
-                if (isValid(newPos, height)) {
-                    visited.setRGB(newPos.getX(), newPos.getY(), Color.WHITE.getRGB());
+                if (isValid(newPos, height, check)) {
+                    drawPixel(newPos, Color.WHITE);
                     queue.add(newPos);
                     parent.put(newPos, pos);
                 }
@@ -82,60 +94,28 @@ public class Day12 {
         return -1;
     }
 
-    private int findPath2(Vector2Int startPos, Vector2Int endPos) {
-        List<Vector2Int> dirs = new ArrayList<>(List.of(
-                Vector2Int.down(),
-                Vector2Int.right(),
-                Vector2Int.up(),
-                Vector2Int.left()));
-
-        var pos = startPos;
-        Queue<Vector2Int> queue = new LinkedList<>(List.of(startPos));
-        Map<Vector2Int, Vector2Int> parent = new HashMap<>();
-        visited.setRGB(pos.getX(), pos.getY(), Color.RED.getRGB());
-
-        while (!queue.isEmpty()) {
-            pos = queue.remove();
-            char height = pos.equals(startPos) ? 'a' : grid[pos.getY()][pos.getX()];
-            if (pos.equals(endPos)) {
-                visited.setRGB(pos.getX(), pos.getY(), Color.GREEN.getRGB());
-                List<Vector2Int> path = new LinkedList<>();
-                System.out.println(pos);
-                while(parent.containsKey(pos)) {
-                    path.add(pos);
-                    pos = parent.get(pos);
-                    if (!pos.equals(startPos))
-                        visited.setRGB(pos.getX(), pos.getY(), Color.BLUE.getRGB());
-                }
-                return path.size();
-            }
-
-            for (var dir : dirs) {
-                var newPos = pos.add(dir);
-                if (isValid(newPos, height)) {
-                    visited.setRGB(newPos.getX(), newPos.getY(), Color.WHITE.getRGB());
-                    queue.add(newPos);
-                    parent.put(newPos, pos);
-                }
-            }
-        }
-        return -1;
-    }
-
-    private boolean isValid(Vector2Int pos, char height) {
+    private boolean isValid(Vector2Int pos, char height, BiFunction<Character, Character, Boolean> check) {
         if (pos.getX() >= 0 && pos.getX() < size.getX() && pos.getY() >= 0 && pos.getY() < size.getY()) {
             if (visited.getRGB(pos.getX(), pos.getY()) == Color.BLACK.getRGB()) {
-                char newHeight = grid[pos.getY()][pos.getX()];
-                return newHeight <= height + 1;
+                char newHeight = getHeight(pos);
+                return check.apply(height, newHeight);
             }
         }
         return false;
     }
 
-    private void writeImage(BufferedImage image, String fileName) {
+    private char getHeight(Vector2Int pos) {
+        return grid[pos.getY()][pos.getX()];
+    }
+
+    private void drawPixel(Vector2Int pos, Color color) {
+        visited.setRGB(pos.getX(), pos.getY(), color.getRGB());
+    }
+
+    private void writeImage(BufferedImage image, String fileName, boolean doesPrint) {
         try {
             ImageIO.write(image, "png", new File( "src/day12/files/" + fileName + "_out.png"));
-            //System.out.println(fileName + " image file created.");
+            if (doesPrint) System.out.println(fileName + " image file created.");
         } catch (IOException e) {
             System.out.println("Could not write image file.");
         }
