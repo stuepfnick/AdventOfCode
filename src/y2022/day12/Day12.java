@@ -77,7 +77,7 @@ public class Day12 {
                     path.add(pos);
                     pos = parent.get(pos);
                     if (getHeight(pos) != destination && !pos.equals(startPos))
-                        visited.setRGB(pos.getX(), pos.getY(), Color.BLUE.getRGB());
+                        drawPixel(pos, Color.BLUE);
                 }
                 return path.size();
             }
