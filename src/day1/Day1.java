@@ -3,7 +3,7 @@ package day1;
 public class Day1 {
     public static void main(String[] args) {
         FoodParser foodParser = new FoodParser();
-        var elves = foodParser.parse("src/day1/input.txt");
+        var elves = foodParser.parse("src/day1/files/input");
 
         Puzzle1 puzzle1 = new Puzzle1();
         System.out.println(puzzle1.solve(elves));

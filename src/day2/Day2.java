@@ -5,7 +5,7 @@ import filehandlers.FileReader;
 public class Day2 {
     public static void main(String[] args) {
         FileReader reader = new FileReader();
-        var lines = reader.read("src/day2/input.txt");
+        var lines = reader.read("src/day2/files/input");
 
         Puzzle1 puzzle1 = new Puzzle1();
         System.out.println(puzzle1.solve(lines));

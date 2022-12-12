@@ -10,7 +10,7 @@ public class Puzzle1 {
     public static void main(String[] args) {
         FileReader reader = new FileReader();
 
-        var lines = reader.read("src/day1/input.txt");
+        var lines = reader.read("src/day1/files/input");
 
         List<Elf> elves = new LinkedList<>();
         List<Integer> calories = new LinkedList<>();
