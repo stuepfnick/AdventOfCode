@@ -71,12 +71,13 @@ public class Day12 {
 
             char height = getHeight(pos);
             if (height == destination) {
+                //drawHeightMap();
                 drawPixel(pos, Color.RED);
                 List<Vector2Int> path = new LinkedList<>();
                 while(parent.containsKey(pos)) {
                     path.add(pos);
                     pos = parent.get(pos);
-                    if (getHeight(pos) != destination && !pos.equals(startPos))
+                    if (!pos.equals(startPos))
                         drawPixel(pos, Color.BLUE);
                 }
                 return path.size();
@@ -92,6 +93,18 @@ public class Day12 {
             }
         }
         return -1;
+    }
+
+    private void drawHeightMap() {
+        visited = new BufferedImage(visited.getWidth(), visited.getHeight(), BufferedImage.TYPE_INT_RGB);
+        for (int y = 0; y < visited.getHeight(); y++) {
+            for (int x = 0; x < visited.getWidth(); x++) {
+                var pos = new Vector2Int(x, y);
+                int height = getHeight(pos);
+                float gray = (height - 'a' + 1) / 28f;
+                drawPixel(pos, Color.getHSBColor(0f, 0f, gray));
+            }
+        }
     }
 
     private boolean isValid(Vector2Int pos, char height, BiFunction<Character, Character, Boolean> check) {
