@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Packet implements Comparable<Packet>, Cloneable {
+public class Packet implements Comparable<Packet> {
 
     private final int number;
     private final List<Packet> packets = new ArrayList<>();
