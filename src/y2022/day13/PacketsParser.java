@@ -1,5 +1,7 @@
 package y2022.day13;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PacketsParser {
@@ -18,6 +20,28 @@ public class PacketsParser {
             sum += result > 0 ? i + 1 : 0;
         }
         return sum;
+    }
+
+    public int parseLines2(List<String> lines) {
+        lines = lines.stream().filter(line -> !line.isEmpty()).toList();
+
+        List<Packet> packets = new ArrayList<>();
+        for (String line : lines) {
+            packets.add(parsePacket(line));
+        }
+
+        var dividerPacket1 = parsePacket("[[2]]");
+        var dividerPacket2 = parsePacket("[[6]]");
+
+        packets.add(dividerPacket1);
+        packets.add(dividerPacket2);
+
+        packets.sort(Collections.reverseOrder());
+
+        int index1 = packets.indexOf(dividerPacket1) + 1;
+        int index2 = packets.indexOf(dividerPacket2) + 1;
+
+        return index1 * index2;
     }
 
     Packet parsePacket(String input) {

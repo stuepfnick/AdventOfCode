@@ -1,14 +1,20 @@
 package y2022.day13;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class Packet implements Comparable<Packet> {
+public class Packet implements Comparable<Packet>, Cloneable {
 
-    private int number;
-    private final List<Packet> packets = new LinkedList<>();
+    private final int number;
+    private final List<Packet> packets = new ArrayList<>();
 
     public Packet() {
+        number = -1;
+    }
+
+    public Packet(Packet packet) {
+        packets.add(packet);
         number = -1;
     }
 
@@ -35,22 +41,35 @@ public class Packet implements Comparable<Packet> {
             } else if (i >= o.packets.size()) {
                 return -1;
             }
-            var left = packets.get(i);
-            var right = o.packets.get(i);
+            var left = (Packet) packets.get(i);
+            var right = (Packet) o.packets.get(i);
             if (left.number > -1 && !right.packets.isEmpty()) {
-                left.packets.add(new Packet(left.number));
-                left.number = -1;
+                var leftCompare = new Packet(new Packet(left.number));
+                int x = leftCompare.compareTo(right);
+                if (x != 0) return x;
             }
             if (right.number > -1 && !left.packets.isEmpty()) {
-                right.packets.add(new Packet(right.number));
-                right.number = -1;
+                var rightCompare = new Packet(new Packet(right.number));
+                int x = left.compareTo(rightCompare);
+                if (x != 0) return x;
             }
             int x = left.compareTo(right);
-            if (x != 0) {
-                return x;
-            }
+            if (x != 0) return x;
         }
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Packet packet = (Packet) o;
+        return number == packet.number && Objects.equals(packets, packet.packets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, packets);
     }
 
     @Override
