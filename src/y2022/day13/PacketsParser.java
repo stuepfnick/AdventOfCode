@@ -14,12 +14,9 @@ public class PacketsParser {
             var packetString = packetStrings.get(i);
             var left = parsePacket(packetString.get(0));
             var right = parsePacket(packetString.get(1));
-
             int result = left.compareTo(right);
-            System.out.println(result);
             sum += result > 0 ? i + 1 : 0;
         }
-
         return sum;
     }
 
@@ -30,14 +27,13 @@ public class PacketsParser {
             if (c == '[') {
                 int depth = 1;
                 for (int subEnd = i + 1; subEnd < input.length(); subEnd++) {
-                    if (input.charAt(subEnd) == ']') {
-                        depth--;
-                    } else if (input.charAt(subEnd) == '[') {
+                    if (input.charAt(subEnd) == '[') {
                         depth++;
+                    } else if (input.charAt(subEnd) == ']') {
+                        depth--;
                     }
                     if (depth == 0) {
                         String sub = input.substring(i, subEnd + 1);
-                        //System.out.println("subpacket: " + sub);
                         packet.getPackets().add(parsePacket(sub));
                         i = subEnd;
                         break;
@@ -52,7 +48,6 @@ public class PacketsParser {
                     subEnd = input.indexOf(']', i);
                 }
                 String numString = input.substring(i, subEnd);
-                //System.out.println("number: " + numString);
                 packet.getPackets().add(new Packet(Integer.parseInt(numString)));
                 i = subEnd;
             }

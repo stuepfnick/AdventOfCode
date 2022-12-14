@@ -26,7 +26,7 @@ public class Packet implements Comparable<Packet> {
 
     @Override
     public int compareTo(Packet o) { // o is right
-        if (number > -1 && o.number > -1) {
+        if (number > -1 || o.number > -1) {
             return Integer.compare(o.number, number);
         }
         for (int i = 0; i < Math.max(packets.size(), o.packets.size()); i++) {
