@@ -40,19 +40,10 @@ public class KnotsParser {
         for (int i = 1; i <= numberOfTails; i++) {
             int deltaX = knotPos[i - 1][0] - knotPos[i][0];
             int deltaY = knotPos[i - 1][1] - knotPos[i][1];
-            int diffX = Math.abs(deltaX);
-            int diffY = Math.abs(deltaY);
 
-            if (diffX > 1) {
-                knotPos[i][0] += deltaX / diffX;
-                if (diffY > 0) {
-                    knotPos[i][1] += deltaY / diffY;
-                }
-            } else if (diffY > 1) {
-                knotPos[i][1] += deltaY / diffY;
-                if (diffX > 0) {
-                    knotPos[i][0] += deltaX / diffX;
-                }
+            if (Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) {
+                knotPos[i][0] += Math.signum(deltaX);
+                knotPos[i][1] += Math.signum(deltaY);
             }
         }
     }
