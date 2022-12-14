@@ -24,12 +24,12 @@ public class Day9 {
 
         System.out.println("part1: " + result);
 
-        var parser2 = new KnotsParserWithImage(9);
+        var parser2 = new KnotsParser(9);
         result = parser2.parseLines(lines);
 
         System.out.println("part2: " + result);
 
-        writeImage(parser2.getImage(), "src/y2022/day09/files/" + fileName);
+        //writeImage(parser2.getImage(), "src/y2022/day09/files/" + fileName);
     }
 
     private void writeImage(BufferedImage image, String fileName) {

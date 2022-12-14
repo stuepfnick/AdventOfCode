@@ -11,8 +11,8 @@ public class KnotsParserWithImage {
     private final int numberOfTails;
     private final int[][] knotPos;
 
-    private BufferedImage image = new BufferedImage(403, 217, BufferedImage.TYPE_INT_RGB);
-    private byte[][] visited = new byte[217][403];
+    private final BufferedImage image = new BufferedImage(403, 217, BufferedImage.TYPE_INT_RGB);
+    private final byte[][] visited = new byte[217][403];
 
     public BufferedImage getImage() {
         return image;

@@ -3,16 +3,18 @@ package y2022.day12;
 import java.util.Objects;
 
 public class Vector2Int {
-    private int x;
-    private int y;
+
+    protected int x;
+    protected int y;
 
     public Vector2Int(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public Vector2Int clone() {
-        return new Vector2Int(x, y);
+    public Vector2Int(Vector2Int other) {
+        x = other.x;
+        y = other.y;
     }
 
     public int getX() {
@@ -28,10 +30,12 @@ public class Vector2Int {
     }
 
     public Vector2Int addLimited(Vector2Int delta, Vector2Int size) {
-        return new Vector2Int(limit(this.x + delta.x, size.x - 1), limit(this.y + delta.y, size.y - 1));
+        return new Vector2Int(
+                limit(this.x + delta.x, size.x - 1),
+                limit(this.y + delta.y, size.y - 1));
     }
 
-    public void translate(Vector2Int delta) {
+    public void move(Vector2Int delta) {
         this.x += delta.x;
         this.y += delta.y;
     }

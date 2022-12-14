@@ -44,15 +44,15 @@ public class KnotsParser {
             int diffY = Math.abs(deltaY);
 
             if (diffX > 1) {
+                knotPos[i][0] += deltaX / diffX;
                 if (diffY > 0) {
                     knotPos[i][1] += deltaY / diffY;
                 }
-                knotPos[i][0] += deltaX / diffX;
             } else if (diffY > 1) {
+                knotPos[i][1] += deltaY / diffY;
                 if (diffX > 0) {
                     knotPos[i][0] += deltaX / diffX;
                 }
-                knotPos[i][1] += deltaY / diffY;
             }
         }
     }
