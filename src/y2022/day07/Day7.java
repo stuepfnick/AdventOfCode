@@ -28,8 +28,8 @@ public class Day7 {
         System.out.println("unrealistic: " + unrealisticSize);
 
         // Part2
-        int total = 70000000;
-        int neededFree = 30000000;
+        int total = 70_000_000;
+        int neededFree = 30_000_000;
         int minSizeToDelete = neededFree - (total - getSize(root));
         findFoldersToDelete(root, minSizeToDelete);
         //System.out.println(sizes);
@@ -66,7 +66,7 @@ public class Day7 {
         for (var subFolder : folder.getFolders().values()) {
             size += getSizesUnder100k2(subFolder);
         }
-        if (getSize(folder) < 100000) {
+        if (getSize(folder) < 100_000) {
             size += getSize(folder);
         }
         return size;

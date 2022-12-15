@@ -1,5 +1,7 @@
 package y2022.day12;
 
+import utilities.Vector2Int;
+
 import java.util.List;
 
 public class GridParser {

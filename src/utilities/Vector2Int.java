@@ -1,4 +1,4 @@
-package y2022.day12;
+package utilities;
 
 import java.util.Objects;
 
@@ -6,6 +6,11 @@ public class Vector2Int {
 
     protected int x;
     protected int y;
+
+    public Vector2Int() {
+        x = 0;
+        y = 0;
+    }
 
     public Vector2Int(int x, int y) {
         this.x = x;
@@ -33,6 +38,11 @@ public class Vector2Int {
         return new Vector2Int(
                 limit(this.x + delta.x, size.x - 1),
                 limit(this.y + delta.y, size.y - 1));
+    }
+
+    public void move(int x, int y) {
+        this.x += x;
+        this.y += y;
     }
 
     public void move(Vector2Int delta) {

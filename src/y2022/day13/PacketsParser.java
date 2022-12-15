@@ -9,7 +9,10 @@ public class PacketsParser {
     public int parseLines(List<String> lines) {
 
         lines = List.of(String.join("\n", lines).split("\n\n"));
-        var packetStrings = lines.stream().map(line -> List.of(line.split("\n"))).toList();
+
+        var packetStrings = lines.stream()
+                .map(line -> List.of(line.split("\n")))
+                .toList();
 
         int sum = 0;
         for (int i = 0; i < packetStrings.size(); i++) {
@@ -23,12 +26,11 @@ public class PacketsParser {
     }
 
     public int parseLines2(List<String> lines) {
-        lines = lines.stream().filter(line -> !line.isEmpty()).toList();
 
-        List<Packet> packets = new ArrayList<>();
-        for (String line : lines) {
-            packets.add(parsePacket(line));
-        }
+        var packets = new ArrayList<>(lines.stream()
+                .filter(line -> !line.isEmpty())
+                .map(this::parsePacket)
+                .toList());
 
         var dividerPacket1 = parsePacket("[[2]]");
         var dividerPacket2 = parsePacket("[[6]]");

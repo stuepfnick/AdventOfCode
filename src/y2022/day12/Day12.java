@@ -1,6 +1,7 @@
 package y2022.day12;
 
 import filehandlers.FileReader;
+import utilities.Vector2Int;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
