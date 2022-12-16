@@ -20,7 +20,7 @@ public class Day14 {
         var lines = reader.read("src/y2022/day14/files/" + fileName);
         var caveScanner = new CaveScanner();
         caveScanner.parseLines(lines);
-        
+
         caveScanner.drawCave1();
         View view = new View(caveScanner.getCave());
 
@@ -33,11 +33,11 @@ public class Day14 {
         writeImage(caveScanner.getCave(), fileName + "-cave1", true);
 
         caveScanner.drawCave2();
-        view = new View(caveScanner.getCave());
+        var view2 = new View(caveScanner.getCave());
 
         result = -1;
         for (boolean doesFindRest = true; doesFindRest; result++) {
-            doesFindRest = caveScanner.pourSandGrain(new Vector2Int(500, 0), view);
+            doesFindRest = caveScanner.pourSandGrain(new Vector2Int(500, 0), view2);
         }
         System.out.println("part2: " + result);
         writeImage(caveScanner.getCave(), fileName + "-cave2", true);

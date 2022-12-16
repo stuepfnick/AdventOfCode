@@ -34,7 +34,7 @@ public class CaveScanner {
             cave.setRGB(oldPos.getX(), oldPos.getY(), Color.BLACK.getRGB());
             cave.setRGB(grain.getX(), grain.getY(), Color.YELLOW.getRGB());
             view.render();
-            sleep(1d/60d);
+            sleep(1d/1000d);
             oldPos = grain;
             var pos = grain.add(Vector2Int.down());
             if (isOutsideCave(pos)) return false;
