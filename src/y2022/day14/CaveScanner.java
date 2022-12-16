@@ -18,7 +18,6 @@ public class CaveScanner {
     }
 
     public void parseLines(List<String> lines) {
-
         rockLines = lines.stream()
                 .map(line -> Arrays.stream(line.split(" -> "))
                         .map(s -> s.split(","))
@@ -27,10 +26,16 @@ public class CaveScanner {
                 .toList();
     }
 
-    public boolean pourSandGrain(Vector2Int grain) {
+    public boolean pourSandGrain(Vector2Int grain, View view) {
         grain.move(-xOffset, 0);
         if (cave.getRGB(grain.getX(), grain.getY()) != Color.BLACK.getRGB()) return false;
+        var oldPos = grain;
         while (true) {
+            cave.setRGB(oldPos.getX(), oldPos.getY(), Color.BLACK.getRGB());
+            cave.setRGB(grain.getX(), grain.getY(), Color.YELLOW.getRGB());
+            view.render();
+            sleep(1d/60d);
+            oldPos = grain;
             var pos = grain.add(Vector2Int.down());
             if (isOutsideCave(pos)) return false;
             if (getColor(pos) == Color.BLACK.getRGB()) {
@@ -114,6 +119,14 @@ public class CaveScanner {
         }
         for (int x = 0; x < cave.getWidth(); x++) {
             cave.setRGB(x, maxY + 2, Color.GRAY.getRGB());
+        }
+    }
+
+    private void sleep(double seconds) {
+        try {
+            Thread.sleep(Math.round(seconds * 1000));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

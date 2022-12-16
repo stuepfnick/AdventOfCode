@@ -23,9 +23,11 @@ public class Day14 {
         caveScanner.parseLines(lines);
         caveScanner.drawCave1();
 
+        View view = new View(caveScanner.getCave());
+
         int result = -1;
         for (boolean doesFindRest = true; doesFindRest; result++) {
-            doesFindRest = caveScanner.pourSandGrain(new Vector2Int(500, 0));
+            doesFindRest = caveScanner.pourSandGrain(new Vector2Int(500, 0), view);
         }
 
         System.out.println("part1: " + result);
@@ -34,7 +36,7 @@ public class Day14 {
         caveScanner.drawCave2();
         result = -1;
         for (boolean doesFindRest = true; doesFindRest; result++) {
-            doesFindRest = caveScanner.pourSandGrain(new Vector2Int(500, 0));
+            doesFindRest = caveScanner.pourSandGrain(new Vector2Int(500, 0), view);
         }
         System.out.println("part2: " + result);
         writeImage(caveScanner.getCave(), fileName + "-cave2", true);
