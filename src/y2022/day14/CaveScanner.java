@@ -28,43 +28,51 @@ public class CaveScanner {
 
     public boolean pourSandGrain(Vector2Int grain, View view) {
         grain.move(-xOffset, 0);
-        if (cave.getRGB(grain.getX(), grain.getY()) != Color.BLACK.getRGB()) return false;
-        var oldPos = grain;
+        if (getColor(grain) != Color.BLACK.getRGB()) return false;
         while (true) {
-            cave.setRGB(oldPos.getX(), oldPos.getY(), Color.BLACK.getRGB());
-            cave.setRGB(grain.getX(), grain.getY(), Color.YELLOW.getRGB());
-            view.render();
-            sleep(1d/1000d);
-            oldPos = grain;
+            view.render(grain, 0);
             var pos = grain.add(Vector2Int.down());
-            if (isOutsideCave(pos)) return false;
+            if (isOutsideCave(pos)) {
+                view.render(null, 1 / 60d);
+                return false;
+            }
             if (getColor(pos) == Color.BLACK.getRGB()) {
                 grain = pos;
                 continue;
             }
             pos = grain.add(new Vector2Int(-1, 1));
-            if (isOutsideCave(pos)) return false;
+            if (isOutsideCave(pos)) {
+                view.render(null, 1 / 60d);
+                return false;
+            }
             if (getColor(pos) == Color.BLACK.getRGB()) {
                 grain = pos;
                 continue;
             }
             pos = grain.add(new Vector2Int(1, 1));
-            if (isOutsideCave(pos)) return false;
+            if (isOutsideCave(pos)) {
+                view.render(null, 1 / 60d);
+                return false;
+            }
             if (getColor(pos) == Color.BLACK.getRGB()) {
                 grain = pos;
                 continue;
             }
-            cave.setRGB(grain.getX(), grain.getY(), Color.YELLOW.getRGB());
+            setColor(grain, Color.YELLOW);
             return true;
         }
     }
 
     private boolean isOutsideCave(Vector2Int pos) {
-        return (pos.getX() < 0 || pos.getX() >= cave.getWidth() || pos.getY() > cave.getHeight());
+        return (pos.getX() < 0 || pos.getX() >= cave.getWidth() || pos.getY() >= cave.getHeight());
     }
 
     private int getColor(Vector2Int pos) {
         return cave.getRGB(pos.getX(), pos.getY());
+    }
+
+    private void setColor(Vector2Int pos, Color color) {
+        cave.setRGB(pos.getX(), pos.getY(), color.getRGB());
     }
 
     public void drawCave1() {
@@ -119,14 +127,6 @@ public class CaveScanner {
         }
         for (int x = 0; x < cave.getWidth(); x++) {
             cave.setRGB(x, maxY + 2, Color.GRAY.getRGB());
-        }
-    }
-
-    private void sleep(double seconds) {
-        try {
-            Thread.sleep(Math.round(seconds * 1000));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
         }
     }
 

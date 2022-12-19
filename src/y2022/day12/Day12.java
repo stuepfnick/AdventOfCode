@@ -17,10 +17,10 @@ public class Day12 {
 
     private final FileReader reader = new FileReader();
     private final GridParser parser = new GridParser();
-
     private char[][] grid;
     private BufferedImage visited;
     private Vector2Int size;
+    private View view;
 
     public static void main(String[] args) {
         var day = new Day12();
@@ -30,15 +30,27 @@ public class Day12 {
         day.solve2(inputFile);
     }
 
+    private void waitForStart(int partNumber) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Press enter to start part" + partNumber + "!");
+        scanner.nextLine();
+    }
+
     private void prepare(String fileName) {
         var lines = reader.read("src/y2022/day12/files/" + fileName);
 
         grid = parser.parseLines(lines);
         size = new Vector2Int(grid[0].length, grid.length);
+
+        var background = drawHeightMap();
+        visited = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_ARGB);
+        view = new View(background, visited);
     }
 
     private void solve1(String fileName) {
-        visited = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_RGB);
+        view.render(1d/60d);
+
+        waitForStart(1);
 
         var result = findPath(parser.getStartPos(), (char) ('z' + 1), (height, newHeight) -> height + 1 >= newHeight);
         writeImage(visited, fileName + "1", false);
@@ -47,7 +59,9 @@ public class Day12 {
     }
 
     private void solve2(String fileName) {
-        visited = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_RGB);
+        waitForStart(2);
+        visited = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_ARGB);
+        view.setVisited(visited);
 
         var result = findPath(parser.getEndPos(), 'a', (height, newHeight) -> height - 1 <= newHeight);
         writeImage(visited, fileName + "2", false);
@@ -96,26 +110,31 @@ public class Day12 {
         return -1;
     }
 
-    private void drawHeightMap() {
-        visited = new BufferedImage(visited.getWidth(), visited.getHeight(), BufferedImage.TYPE_INT_RGB);
-        for (int y = 0; y < visited.getHeight(); y++) {
-            for (int x = 0; x < visited.getWidth(); x++) {
+    private BufferedImage drawHeightMap() {
+        var image = new BufferedImage(size.getX(), size.getY(), BufferedImage.TYPE_INT_RGB);
+        for (int y = 0; y < size.getY(); y++) {
+            for (int x = 0; x < size.getX(); x++) {
                 var pos = new Vector2Int(x, y);
                 int height = getHeight(pos);
                 float gray = (height - 'a' + 1) / 28f;
-                drawPixel(pos, Color.getHSBColor(0f, 0f, gray));
+                //drawPixel(pos, Color.getHSBColor(0f, 0f, gray));
+                image.setRGB(pos.getX(), pos.getY(), Color.getHSBColor(0f, 0f, gray).getRGB());
             }
         }
+        return image;
     }
 
     private boolean isValid(Vector2Int pos, char height, BiFunction<Character, Character, Boolean> check) {
         if (pos.getX() >= 0 && pos.getX() < size.getX() && pos.getY() >= 0 && pos.getY() < size.getY()) {
-            if (visited.getRGB(pos.getX(), pos.getY()) == Color.BLACK.getRGB()) {
-                char newHeight = getHeight(pos);
-                return check.apply(height, newHeight);
+            if (isTransparent(pos)) {
+                return check.apply(height, getHeight(pos));
             }
         }
         return false;
+    }
+
+    private boolean isTransparent(Vector2Int pos) {
+        return visited.getRGB(pos.getX(), pos.getY()) >> 24 == 0x00;
     }
 
     private char getHeight(Vector2Int pos) {
@@ -123,7 +142,12 @@ public class Day12 {
     }
 
     private void drawPixel(Vector2Int pos, Color color) {
+        color = new Color(color.getRed(), color.getGreen(), color.getBlue(), 100);
         visited.setRGB(pos.getX(), pos.getY(), color.getRGB());
+        if (color.getRed() > 250)
+            view.render(1/1000d);
+        else
+            view.render(1/60d);
     }
 
     private void writeImage(BufferedImage image, String fileName, boolean doesPrint) {

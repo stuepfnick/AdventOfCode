@@ -8,7 +8,7 @@ public class Day13 {
 
     public static void main(String[] args) {
         var day = new Day13();
-        day.solve("input");
+        day.solve("example");
     }
 
     private void solve(String fileName) {

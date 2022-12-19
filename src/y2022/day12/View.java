@@ -1,6 +1,4 @@
-package y2022.day14;
-
-import utilities.Vector2Int;
+package y2022.day12;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,25 +8,31 @@ import java.awt.image.BufferedImage;
 public class View {
 
     private JFrame frame;
-    private final BufferedImage cave;
-    private BufferStrategy bufferStrategy;
-    private final int scale;
+    private final BufferedImage background;
+    private BufferedImage visited;
+    private final int WIDTH, HEIGHT;
 
-    public View(BufferedImage cave, int scale, int left) {
-        this.cave = cave;
-        this.scale = scale;
-        createAndShowGUI(left);
+    private BufferStrategy bufferStrategy;
+
+    public View(BufferedImage background, BufferedImage visited) {
+        this.background = background;
+        this.visited = visited;
+
+        WIDTH = background.getWidth() * 4;
+        HEIGHT = background.getHeight() * 4;
+
+        createAndShowGUI();
     }
 
-    private void createAndShowGUI(int left) {
+    public void setVisited(BufferedImage visited) {
+        this.visited = visited;
+    }
+
+    private void createAndShowGUI() {
         // Sim View
         frame = new JFrame("Simulation");
-        frame.setLocation(left, 0);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel panel = (JPanel) frame.getContentPane();
-
-        int WIDTH = cave.getWidth() * scale;
-        int HEIGHT = cave.getHeight() * scale;
 
         panel.setSize(WIDTH, HEIGHT);
         panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -48,15 +52,12 @@ public class View {
         bufferStrategy = canvas.getBufferStrategy();
     }
 
-    public void render(Vector2Int grain, double time) {
+    public void render(double time) {
         sleep(time);
-        if (bufferStrategy == null) return; // View not ready yet
+        //if (bufferStrategy == null) return; // View not ready yet
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
-        g.drawImage(cave, 0, 0, cave.getWidth() * scale, cave.getHeight() * scale, frame);
-        if (grain != null) {
-            g.setColor(Color.YELLOW);
-            g.fillRect(grain.getX() * scale, grain.getY() * scale, scale, scale);
-        }
+        g.drawImage(background, 0, 0, background.getWidth() * 4, background.getHeight() * 4, frame);
+        g.drawImage(visited, 0, 0, background.getWidth() * 4, background.getHeight() * 4, frame);
         g.dispose();
         bufferStrategy.show();
     }
@@ -68,4 +69,5 @@ public class View {
             throw new RuntimeException(e);
         }
     }
+
 }

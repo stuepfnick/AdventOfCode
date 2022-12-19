@@ -2,9 +2,7 @@ package y2022.day06;
 
 import filehandlers.FileReader;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Day6b {
 

@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Day14 {
 
@@ -22,7 +23,10 @@ public class Day14 {
         caveScanner.parseLines(lines);
 
         caveScanner.drawCave1();
-        View view = new View(caveScanner.getCave());
+        View view = new View(caveScanner.getCave(), 4, 0);
+        view.render(null, 1d / 60d);
+
+        waitForStart(1);
 
         int result = -1;
         for (boolean doesFindRest = true; doesFindRest; result++) {
@@ -32,8 +36,12 @@ public class Day14 {
         System.out.println("part1: " + result);
         writeImage(caveScanner.getCave(), fileName + "-cave1", true);
 
+        int left = 20 + caveScanner.getCave().getWidth() * 4;
         caveScanner.drawCave2();
-        var view2 = new View(caveScanner.getCave());
+        var view2 = new View(caveScanner.getCave(), 4, left);
+        view2.render(null, 1d / 60d);
+
+        waitForStart(2);
 
         result = -1;
         for (boolean doesFindRest = true; doesFindRest; result++) {
@@ -41,6 +49,12 @@ public class Day14 {
         }
         System.out.println("part2: " + result);
         writeImage(caveScanner.getCave(), fileName + "-cave2", true);
+    }
+
+    private void waitForStart(int partNumber) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Press enter to start part" + partNumber + "!");
+        scanner.nextLine();
     }
 
     private void writeImage(BufferedImage image, String fileName, boolean doesPrint) {
